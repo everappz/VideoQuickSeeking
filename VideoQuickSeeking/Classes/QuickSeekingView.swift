@@ -13,17 +13,17 @@ private struct Constants {
     static let debounceDurationInMilliSecondas: Int = 900
 }
 
-open class QuickSeekingView: UIView {
+@objc public class QuickSeekingView: UIView {
     
     // MARK: - Variables
     private lazy var forwardView: ForwardRewindView = {
         let forwardView = ForwardRewindView(direction: .forward,
-                                            seekingDuration: self.seekingDuration)
+                                            seekingDuration: self.seekingForwardDuration)
         return forwardView
     }()
     private lazy var rewindView: ForwardRewindView = {
         let rewindView = ForwardRewindView(direction: .rewind,
-                                           seekingDuration: self.seekingDuration)
+                                           seekingDuration: self.seekingBackwardDuration)
         return rewindView
     }()
     private lazy var debouncedFunction: (() -> Void) = {
@@ -42,7 +42,8 @@ open class QuickSeekingView: UIView {
     
     private var direction: FRDirection = .forward
     private var iteration = 1
-    var seekingDuration = 10
+    var seekingForwardDuration = 10
+    var seekingBackwardDuration = 10
     
     // MARK: - Constructors
     init() {
@@ -53,10 +54,11 @@ open class QuickSeekingView: UIView {
     /// Constructor
     ///
     /// - Parameter seekingDuration: Number of second for each forward/rewind
-    public init(seekingDuration: Int = 10) {
+    @objc public init(seekingForwardDuration: Int, seekingBackwardDuration: Int) {
         super.init(frame: .zero)
-        self.seekingDuration = seekingDuration
-        self.setupView()
+        self.seekingForwardDuration = seekingForwardDuration
+        self.seekingBackwardDuration = seekingBackwardDuration
+        setupView()
     }
     
     required public init?(coder: NSCoder) {
@@ -92,9 +94,11 @@ open class QuickSeekingView: UIView {
     ///   - direction: Forward or Rewind
     ///   - point: Position of touch point
     ///   - shouldResetSeekingCounter: Should reset seeking counter if seeking to the begining/end of the video
-    public func animate(direction: FRDirection,
-                        at point: CGPoint,
-                        shouldResetSeekingCounter: Bool = false) {
+    @objc public func animate(direction dir: Int,
+                              at point: CGPoint,
+                              shouldResetSeekingCounter: Bool = false) {
+        let direction = FRDirection.from(dir)
+
         if self.direction != direction || shouldResetSeekingCounter {
             self.resetView()
         }
@@ -116,17 +120,17 @@ open class QuickSeekingView: UIView {
     ///
     /// - Parameter point: Position of touch point
     /// - Returns: Direction(Forward/Rewind) or nil if the point is in outside
-    public func directionOfPoint(point: CGPoint) -> FRDirection? {
+    @objc public func directionOfPoint(point: CGPoint) -> Int {
         let point = self.convert(point, to: self.rewindView)
         if self.rewindView.bounds.contains(point) {
-            return .rewind
+            return 0//rewind
         } else {
             let point = self.convert(point, to: self.forwardView)
             if self.forwardView.bounds.contains(point) {
-                return .forward
+                return 1//forward
             }
         }
-        return nil
+        return -1
     }
     
     /// Set ripple style for forward/rewind
@@ -135,7 +139,7 @@ open class QuickSeekingView: UIView {
     ///   - color: Color of ripple
     ///   - rippleAlpha: Alpha of ripple
     ///   - backgroundAlpha: Alpha of ripple background
-    public func setRippleStyle(color: UIColor,
+    @objc public func setRippleStyle(color: UIColor,
                                withRippleAlpha rippleAlpha: CGFloat,
                                withBackgroundAlpha backgroundAlpha: CGFloat) {
         [self.forwardView, self.rewindView].forEach { view in

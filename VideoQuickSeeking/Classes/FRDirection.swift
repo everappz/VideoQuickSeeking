@@ -21,4 +21,12 @@ public enum FRDirection {
         case .forward: return imageViews
         }
     }
+    
+    static func from(_ dir: Int) -> FRDirection {
+        return dir == 0 ? .rewind : .forward
+    }
+
+    func toObjC() -> Int {
+        return self == .rewind ? 0 : 1
+    }
 }
