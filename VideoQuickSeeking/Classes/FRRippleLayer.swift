@@ -240,9 +240,9 @@ public class FRRippleLayer: CALayer, CAAnimationDelegate {
                 opacityAnim.fromValue = 1
                 opacityAnim.toValue = 0
                 opacityAnim.duration = kMKClearEffectsDuration
-                opacityAnim.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+                opacityAnim.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
                 opacityAnim.isRemovedOnCompletion = false
-                opacityAnim.fillMode = kCAFillModeForwards
+                opacityAnim.fillMode = CAMediaTimingFillMode.forwards
                 opacityAnim.delegate = self
                 
                 self.add(opacityAnim, forKey: "opacityAnim")
@@ -263,7 +263,7 @@ public class FRRippleLayer: CALayer, CAAnimationDelegate {
             scaleAnim.fromValue = 0
             scaleAnim.toValue = 1
             scaleAnim.duration = rippleDuration
-            scaleAnim.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
+            scaleAnim.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeIn)
             scaleAnim.delegate = self
             
             let moveAnim = CABasicAnimation(keyPath: "position")
@@ -272,7 +272,7 @@ public class FRRippleLayer: CALayer, CAAnimationDelegate {
                 x: superLayer.bounds.midX,
                 y: superLayer.bounds.midY))
             moveAnim.duration = rippleDuration
-            moveAnim.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
+            moveAnim.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeIn)
             
             effectIsRunning = true
             rippleLayer.opacity = 1
